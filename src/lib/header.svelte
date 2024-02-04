@@ -1,5 +1,10 @@
 <script>
-  import { isAuthenticated, usernameStore, userEmailStore } from "$lib/auth";
+  import {
+    isAuthenticated,
+    subscribeUsername,
+    subscribeUserImage,
+  } from "$lib/auth";
+  import { fallbackUserImage } from "$lib/constants";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
 
@@ -10,17 +15,18 @@
    */
   let username;
 
-  /**
-   * @type {string}
-   */
-  let userEmail;
-
-  usernameStore.subscribe((value) => {
+  subscribeUsername((value) => {
     username = value;
   });
 
-  userEmailStore.subscribe((value) => {
-    userEmail = value;
+  /**
+   * @type {string}
+   */
+  let userImage;
+
+  subscribeUserImage((value) => {
+    if (value) userImage = value;
+    else userImage = fallbackUserImage;
   });
 
   onMount(() => {
@@ -39,24 +45,8 @@
           href="/">Home</a
         >
       </li>
-      <!-- Auth nav links -->
-      <li class="nav-item">
-        <a
-          class={`nav-link ${$page.url.pathname === "/login" ? "active" : ""}`}
-          href="/login">Sign in</a
-        >
-      </li>
-      <li class="nav-item">
-        <a
-          class={`nav-link ${
-            $page.url.pathname === "/register" ? "active" : ""
-          }`}
-          href="/register">Sign up</a
-        >
-      </li>
-      <!-- Auth nav links -->
-      <!-- Feature nav links -->
       {#if isLoggedIn}
+        <!-- Feature nav links -->
         <li class="nav-item">
           <a class="nav-link" href="/editor">
             <i class="ion-compose"></i>&nbsp;New Article
@@ -68,14 +58,33 @@
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="/profile/eric-simons">
+          <a class="nav-link" href={`/profile/${username}`}>
             <!-- TODO: add image rendering -->
-            <!-- <img src="" class="user-pic" /> -->
-            Eric Simons
+            <img src={userImage} class="user-pic" alt="Profile Image" />
+            {username}
           </a>
         </li>
+        <!-- Feature nav links -->
+      {:else}
+        <!-- Auth nav links -->
+        <li class="nav-item">
+          <a
+            class={`nav-link ${
+              $page.url.pathname === "/login" ? "active" : ""
+            }`}
+            href="/login">Sign in</a
+          >
+        </li>
+        <li class="nav-item">
+          <a
+            class={`nav-link ${
+              $page.url.pathname === "/register" ? "active" : ""
+            }`}
+            href="/register">Sign up</a
+          >
+        </li>
+        <!-- Auth nav links -->
       {/if}
-      <!-- Feature nav links -->
     </ul>
   </div>
 </nav>
