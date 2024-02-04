@@ -1,6 +1,5 @@
 <script>
   import { page } from "$app/stores";
-  console.log($page.url.pathname === "/" ? "active" : "");
 </script>
 
 <nav class="navbar navbar-light">
