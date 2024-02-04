@@ -207,9 +207,9 @@
           </fieldset>
         </form>
         <hr />
-        <button class="btn btn-outline-danger" on:click|preventDefault={logOut}
-          >Or click here to logout.</button
-        >
+        <button class="btn btn-outline-danger" on:click|preventDefault={logOut}>
+          Or click here to logout.
+        </button>
       </div>
     </div>
   </div>
