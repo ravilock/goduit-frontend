@@ -1,15 +1,16 @@
+import { listArticlesPageLimit } from "$lib/constants";
 import { error } from "@sveltejs/kit"
-
-const listArticlesPageLimit = 20;
 
 const statusNotFound = 404;
 
 /*
  * @type {import('./$types').PageLoad}
  */
-export async function load({ params }): Promise<{ profile: any; articles: any; }> {
+export async function load({ params, url }): Promise<{ profile: any; articles: any; }> {
   // TODO: Talvez passar fetch para dentro das funções de load
-  const [profile, articles] = await Promise.all([loadProfileData(params.username), loadUserArticles(params.username)])
+  const username = params.username;
+  const page = url.searchParams.get("page") || 1
+  const [profile, articles] = await Promise.all([loadProfileData(params.username), loadUserArticles(username, page)])
   return {
     profile,
     articles
@@ -28,7 +29,8 @@ async function loadProfileData(username: string): Promise<any> {
   return data.profile
 }
 
-async function loadUserArticles(author: string, page = 1): Promise<any> {
+async function loadUserArticles(author: string, page: int): Promise<any> {
+  console.log({ author, page })
   const offset = listArticlesPageLimit * (page - 1)
   const query = new URLSearchParams({
     author,

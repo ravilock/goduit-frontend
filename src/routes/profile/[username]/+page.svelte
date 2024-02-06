@@ -1,7 +1,8 @@
 <script>
   import ArticlePreview from "$lib/articlePreview.svelte";
   import { isAuthenticated, subscribeUsername } from "$lib/auth";
-  import { fallbackUserImage } from "$lib/constants";
+  import { fallbackUserImage, listArticlesPageLimit } from "$lib/constants";
+  import { page } from "$app/stores";
   import { onMount } from "svelte";
 
   let isLoggedIn = false;
@@ -14,6 +15,8 @@
   subscribeUsername((value) => {
     clientUsername = value;
   });
+
+  $: currentPage = Number($page.url.searchParams.get("page") || 1);
 
   export let data;
   onMount(() => {
@@ -69,12 +72,23 @@
         {/each}
 
         <ul class="pagination">
+          {#if currentPage > 1}
+            <li class="page-item">
+              <a class="page-link" href="?page={currentPage - 1}"
+                >{currentPage - 1}</a
+              >
+            </li>
+          {/if}
           <li class="page-item active">
-            <a class="page-link" href="">1</a>
+            <a class="page-link" href="?page={currentPage}">{currentPage}</a>
           </li>
-          <li class="page-item">
-            <a class="page-link" href="">2</a>
-          </li>
+          {#if data.articles.length === listArticlesPageLimit}
+            <li class="page-item">
+              <a class="page-link" href="?page={currentPage + 1}"
+                >{currentPage + 1}</a
+              >
+            </li>
+          {/if}
         </ul>
       </div>
     </div>
