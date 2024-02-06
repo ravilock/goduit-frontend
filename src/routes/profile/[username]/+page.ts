@@ -32,6 +32,7 @@ async function loadUserArticles(author: string, page = 1): Promise<any> {
   const offset = listArticlesPageLimit * (page - 1)
   const query = new URLSearchParams({
     author,
+    limit: listArticlesPageLimit.toString(),
     offset: offset.toString()
   })
   const response = await fetch(`${import.meta.env.VITE_API_URL}/api/articles?${query.toString()}`);
