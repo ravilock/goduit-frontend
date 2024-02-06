@@ -7,6 +7,7 @@
   import { fallbackUserImage } from "$lib/constants";
   import { onNavigate } from "$app/navigation";
   import { page } from "$app/stores";
+  import { onMount } from "svelte";
 
   let isLoggedIn = false;
 
@@ -29,6 +30,9 @@
     else userImage = fallbackUserImage;
   });
 
+  onMount(() => {
+    isLoggedIn = isAuthenticated();
+  });
   onNavigate(() => {
     isLoggedIn = isAuthenticated();
   });
