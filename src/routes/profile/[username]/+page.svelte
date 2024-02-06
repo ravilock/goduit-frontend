@@ -1,7 +1,6 @@
 <script>
   import { isAuthenticated, subscribeUsername } from "$lib/auth";
-  import Footer from "$lib/footer.svelte";
-  import Header from "$lib/header.svelte";
+  import { fallbackUserImage } from "$lib/constants";
   import { onMount } from "svelte";
 
   let isLoggedIn = false;
@@ -36,15 +35,18 @@
   });
 </script>
 
-<Header />
 <div class="profile-page">
   <div class="user-info">
     <div class="container">
       <div class="row">
         <div class="col-xs-12 col-md-10 offset-md-1">
-          <img src={data.profile.image} class="user-img" alt="This is me" />
+          <img
+            src={data.profile.image ?? fallbackUserImage}
+            class="user-img"
+            alt="This is me"
+          />
           <h4>{data.profile.username}</h4>
-          <p>{data.profile.bio}</p>
+          <p>{data.profile.bio ?? ""}</p>
           {#if isLoggedIn && data.profile.username !== clientUsername && !data.profile.following}
             <button class="btn btn-sm btn-outline-secondary action-btn">
               <i class="ion-plus-round"></i>
@@ -141,4 +143,3 @@
     </div>
   </div>
 </div>
-<Footer />

@@ -15,8 +15,6 @@
     getToken,
     logOut,
   } from "$lib/auth";
-  import Footer from "$lib/footer.svelte";
-  import Header from "$lib/header.svelte";
   import ErrorMessages from "$lib/errorMessages.svelte";
 
   /**
@@ -148,7 +146,6 @@
   }
 </script>
 
-<Header />
 <div class="settings-page">
   <div class="container page">
     <div class="row">
@@ -214,4 +211,3 @@
     </div>
   </div>
 </div>
-<Footer />

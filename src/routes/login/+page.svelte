@@ -1,8 +1,6 @@
 <script>
   import * as yup from "yup";
   import { logIn } from "$lib/auth";
-  import Header from "$lib/header.svelte";
-  import Footer from "$lib/footer.svelte";
   import ErrorMessages from "$lib/errorMessages.svelte";
 
   /**
@@ -38,7 +36,6 @@
   }
 </script>
 
-<Header />
 <div class="auth-page">
   <div class="container page">
     <div class="row">
@@ -79,4 +76,3 @@
     </div>
   </div>
 </div>
-<Footer />
