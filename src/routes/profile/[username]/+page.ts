@@ -7,8 +7,8 @@ const statusNotFound = 404;
 /*
  * @type {import('./$types').PageLoad}
  */
-export async function load({ fetch, params }): Promise<{ profile: any; articles: any; }> {
-  // TODO: Passar fetch para dentro das funções de load
+export async function load({ params }): Promise<{ profile: any; articles: any; }> {
+  // TODO: Talvez passar fetch para dentro das funções de load
   const [profile, articles] = await Promise.all([loadProfileData(params.username), loadUserArticles(params.username)])
   return {
     profile,
