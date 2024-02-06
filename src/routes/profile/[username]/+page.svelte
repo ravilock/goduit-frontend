@@ -38,6 +38,7 @@
           <p>{data.profile.bio ?? ""}</p>
           {#if isLoggedIn && data.profile.username !== clientUsername && !data.profile.following}
             <button class="btn btn-sm btn-outline-secondary action-btn">
+              <!-- TODO: Implement follow -->
               <i class="ion-plus-round"></i>
               &nbsp; Follow {data.profile.username}
             </button>
