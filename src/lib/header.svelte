@@ -5,7 +5,7 @@
     subscribeUserImage,
   } from "$lib/auth";
   import { fallbackUserImage } from "$lib/constants";
-  import { onMount } from "svelte";
+  import { onNavigate } from "$app/navigation";
   import { page } from "$app/stores";
 
   let isLoggedIn = false;
@@ -29,7 +29,7 @@
     else userImage = fallbackUserImage;
   });
 
-  onMount(() => {
+  onNavigate(() => {
     isLoggedIn = isAuthenticated();
   });
 </script>
