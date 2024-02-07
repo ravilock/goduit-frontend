@@ -122,6 +122,8 @@ export function isAuthenticated() {
 export function logOut() {
   sessionStorage.removeItem("username");
   sessionStorage.removeItem("userEmail");
+  sessionStorage.removeItem("userImage");
+  sessionStorage.removeItem("userBio");
   sessionStorage.removeItem("token")
   deleteCookie(identityCookieName);
   goto("/")
