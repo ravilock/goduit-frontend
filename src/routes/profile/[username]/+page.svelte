@@ -187,9 +187,11 @@
             <li class="nav-item">
               <a class="nav-link active" href="">My Articles</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="">Favorited Articles</a>
-            </li>
+            <!-- TODO: Implement favorited articles before -->
+            <!--   <li class="nav-item"> -->
+            <!--     <a class="nav-link" href="">Favorited Articles</a> -->
+            <!--   </li> -->
+            <!-- </ul> -->
           </ul>
         </div>
 
