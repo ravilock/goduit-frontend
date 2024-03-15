@@ -44,7 +44,7 @@
   /**
    * @type {{ author: { username: string; image: string; following: boolean; }; favoritesCount: number; slug: string; title: string; description: string; body: string; tagList: string[]; createdAt: string, updatedAt?: string }}
    */
-  export let article;
+  let article;
 
   /**
    * @type Date
@@ -124,7 +124,7 @@
 
         <div class="article-meta">
           <a href={`/profile/${article.author.username}`}
-            ><img src={article.author.image ?? fallbackUserImage} /></a
+            ><img src={article.author.image || fallbackUserImage} /></a
           >
           <div class="info">
             <a href={`/profile/${article.author.username}`} class="author"
@@ -198,7 +198,7 @@
       <div class="article-actions">
         <div class="article-meta">
           <a href={`/profile/${article.author.username}`}
-            ><img src={article.author.image ?? fallbackUserImage} /></a
+            ><img src={article.author.image || fallbackUserImage} /></a
           >
           <div class="info">
             <a href={`/profile/${article.author.username}`} class="author"
@@ -251,25 +251,30 @@
 
       <div class="row">
         <div class="col-xs-12 col-md-8 offset-md-2">
-          {#if isLoggedIn}
-            <form class="card comment-form">
-              <div class="card-block">
-                <textarea
-                  class="form-control"
-                  placeholder="Write a comment..."
-                  rows="3"
-                ></textarea>
-              </div>
-              <div class="card-footer">
-                <img
-                  src={article.author.image ?? fallbackUserImage}
-                  class="comment-author-img"
-                />
-                <!-- TODO: Add comment article -->
+          <form class="card comment-form">
+            <div class="card-block">
+              <textarea
+                disabled={!isLoggedIn}
+                class="form-control"
+                placeholder="Write a comment..."
+                rows="3"
+              ></textarea>
+            </div>
+            <div class="card-footer">
+              <img
+                src={userImage || fallbackUserImage}
+                class="comment-author-img"
+              />
+              <!-- TODO: Add comment article -->
+              {#if isLoggedIn}
                 <button class="btn btn-sm btn-primary">Post Comment</button>
-              </div>
-            </form>
-          {/if}
+              {:else}
+                <button class="btn btn-sm btn-primary disabled" disabled
+                  >Sign In To Comment</button
+                >
+              {/if}
+            </div>
+          </form>
           {#each comments as comment (comment)}
             <Comment {comment} />
           {/each}

@@ -18,7 +18,7 @@
   <div class="article-meta">
     <a href={`/profile/${article.author.username}`}>
       <img
-        src={article.author.image ?? fallbackUserImage}
+        src={article.author.image || fallbackUserImage}
         alt="author profile pic"
       />
     </a>

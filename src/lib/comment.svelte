@@ -20,7 +20,10 @@
   </div>
   <div class="card-footer">
     <a href={`/profile/${comment.author.username}`} class="comment-author">
-      <img src={comment.author.image} class="comment-author-img" />
+      <img
+        src={comment.author.image || fallbackUserImage}
+        class="comment-author-img"
+      />
     </a>
     &nbsp;
     <a href={`/profile/${comment.author.username}`} class="comment-author">
