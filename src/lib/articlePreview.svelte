@@ -2,9 +2,16 @@
   import { fallbackUserImage } from "./constants";
 
   /**
-   * @type {{ author: { username: any; image: any; }; favoritesCount: any; slug: any; title: any; description: any; tagList: any; }}
+   * @type {{ author: { username: string; image: string; }; favoritesCount: number; slug: string; title: string; description: string; tagList: string[]; createdAt: string, updatedAt?: string }}
    */
   export let article;
+  const createAt = new Date(Date.parse(article.createdAt));
+  /**
+   * @type Date | undefined
+   */
+  let updatedAt = article.updatedAt
+    ? new Date(Date.parse(article.updatedAt))
+    : undefined;
 </script>
 
 <div class="article-preview">
@@ -19,7 +26,14 @@
       <a href={`/profile/${article.author.username}`} class="author">
         {article.author.username}
       </a>
-      <span class="date">January 20th</span>
+      <span class="date"
+        ><b>Written At: {createAt.toLocaleDateString()}</b></span
+      >
+      {#if updatedAt}
+        <span class="date"
+          ><b>Updated At: {updatedAt.toLocaleDateString()}</b></span
+        >
+      {/if}
     </div>
     <button class="btn btn-outline-primary btn-sm pull-xs-right">
       <i class="ion-heart"></i>&nbsp;{article.favoritesCount}
@@ -27,7 +41,7 @@
   </div>
   <a href={`/article/${article.slug}`} class="preview-link">
     <h1>{article.title}</h1>
-    <p>{article.description}</p>
+    <p><b>{article.description}</b></p>
     <span>Read more...</span>
     <ul class="tag-list">
       {#each article.tagList as tag (tag)}
