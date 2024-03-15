@@ -134,6 +134,8 @@
   }
 </script>
 
+<!-- TODO: Implementar tela com a função load do +page.js -->
+
 <div class="profile-page">
   <div class="user-info">
     <div class="container">
