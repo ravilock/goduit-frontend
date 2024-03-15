@@ -35,6 +35,7 @@
         >
       {/if}
     </div>
+    <!-- TODO: Add favorite article -->
     <button class="btn btn-outline-primary btn-sm pull-xs-right">
       <i class="ion-heart"></i>&nbsp;{article.favoritesCount}
     </button>
