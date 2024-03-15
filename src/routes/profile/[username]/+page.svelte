@@ -56,14 +56,14 @@
    */
   async function loadProfileData(username) {
     const token = getToken();
-    if (!token) return logOut();
+    const headers = new Headers({
+      "Content-Type": "application/json",
+    });
+    if (token) headers.set("Authorization", `Bearer ${token}`);
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/profile/${username}`,
       {
-        headers: new Headers({
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        }),
+        headers,
       },
     );
     const data = await response.json();
