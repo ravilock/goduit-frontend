@@ -1,17 +1,27 @@
 <script>
   import { fallbackUserImage } from "./constants";
+  import { subscribeUsername } from "$lib/auth";
+  import { page } from "$app/stores";
 
   /**
-   * @type {{ author: { username: string; image: string; }; createdAt: string, updatedAt?: string, body: string }}
+   * @type {string}
+   */
+  let clientUsername;
+
+  /**
+   * @type {() => Promise<void>}
+   */
+  export let deleteComment;
+
+  subscribeUsername((value) => {
+    clientUsername = value;
+  });
+
+  /**
+   * @type {{ author: { username: string; image: string; }; id: string; createdAt: string, updatedAt?: string, body: string }}
    */
   export let comment;
   const createAt = new Date(Date.parse(comment.createdAt));
-  /**
-   * @type Date | undefined
-   */
-  let updatedAt = comment.updatedAt
-    ? new Date(Date.parse(comment.updatedAt))
-    : undefined;
 </script>
 
 <div class="card">
@@ -30,5 +40,10 @@
       {comment.author.username}
     </a>
     <span class="date-posted"><b>{createAt.toLocaleDateString()}</b></span>
+    {#if comment.author.username === clientUsername}
+      <span class="mod-options" on:click|preventDefault={deleteComment}>
+        <i class="ion-trash-a"></i>
+      </span>
+    {/if}
   </div>
 </div>
