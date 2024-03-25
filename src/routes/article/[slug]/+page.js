@@ -69,5 +69,3 @@ async function loadComments(slug) {
   }
   return data.comments;
 }
-
-

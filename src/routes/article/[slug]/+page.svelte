@@ -59,7 +59,7 @@
   let updatedAt;
 
   /**
-   * @type {any[]}
+   * @type {{ author: { username: string; image: string; }; id: string; createdAt: string, updatedAt?: string, body: string }[]}
    */
   let comments = data.comments || [];
 
@@ -95,6 +95,27 @@
       return error(response.status, data.message);
     }
     comments = [data.comment, ...comments];
+  }
+
+  /**
+   * @param {string} commentId
+   */
+  function createDeleteCommentHandler(commentId) {
+    return async function () {
+      const token = getToken();
+      if (!token) logOut();
+      await fetch(
+        `${import.meta.env.VITE_API_URL}/api/article/${slug}/comments/${commentId}`,
+        {
+          method: "DELETE",
+          headers: new Headers({
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          }),
+        },
+      );
+      comments = comments.filter((comment) => comment.id !== commentId);
+    };
   }
 </script>
 
@@ -261,7 +282,10 @@
           </div>
         </form>
         {#each comments as comment (comment)}
-          <Comment {comment} />
+          <Comment
+            {comment}
+            deleteComment={createDeleteCommentHandler(comment.id)}
+          />
         {/each}
       </div>
     </div>
