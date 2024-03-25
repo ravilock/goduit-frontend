@@ -69,6 +69,7 @@
   let comment = "";
 
   async function writeComment() {
+    if (!comment) return;
     const token = getToken();
     if (!token) logOut();
     const response = await fetch(
@@ -86,6 +87,7 @@
         }),
       },
     );
+    comment = "";
     const data = await response.json();
     console.log(data);
     if (!response.ok) {
