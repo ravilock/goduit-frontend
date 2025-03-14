@@ -5,14 +5,14 @@
   /** @type {import('./$types').PageData} */
   export let data;
 
-  let listArticlesPageLimit = 10;
+  let listArticlesPageLimit = 20;
 
   $: currentPage = Number($page.url.searchParams.get("page") || 1);
 
   /**
    * @type {{ author: { username: string; image: string; following: boolean; }; favoritesCount: number; slug: string; title: string; description: string; body: string; tagList: string[]; createdAt: string, updatedAt?: string }[]}
    */
-  let articles = data.articles;
+  $: articles = data.articles;
 </script>
 
 <div class="home-page">
