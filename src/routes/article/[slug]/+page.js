@@ -25,7 +25,7 @@ async function loadArticle(slug) {
   });
   if (token) headers.set("Authorization", `Bearer ${token}`);
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/api/article/${slug}`,
+    `${import.meta.env.VITE_API_URL}/api/articles/${slug}`,
     {
       headers,
     },
@@ -52,7 +52,7 @@ async function loadComments(slug) {
   });
   if (token) headers.set("Authorization", `Bearer ${token}`);
   const response = await fetch(
-    `${import.meta.env.VITE_API_URL}/api/article/${slug}/comments`,
+    `${import.meta.env.VITE_API_URL}/api/articles/${slug}/comments`,
     {
       headers,
     },
