@@ -64,7 +64,7 @@
         <li class="nav-item">
           <a class="nav-link" href={`/profile/${username}`}>
             <!-- TODO: add image rendering -->
-            <img src={userImage} class="user-pic" alt="Profile Image" />
+            <img src={userImage} class="user-pic" alt="User Profile" />
             {username}
           </a>
         </li>

@@ -7,7 +7,7 @@ export const ssr = false
 export async function load() {
   const [articles] = await Promise.all([loadArticles()]);
   return {
-    article: articles,
+    articles: articles,
   }
 }
 

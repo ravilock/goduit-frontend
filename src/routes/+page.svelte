@@ -1,20 +1,11 @@
 <script>
   import ArticlePreview from "$lib/articlePreview.svelte";
-  import { subscribeUsername } from "$lib/auth";
+  import { page } from "$app/stores";
 
   /** @type {import('./$types').PageData} */
   export let data;
 
-  let isLoggedIn = false;
-
-  /**
-   * @type {string}
-   */
-  let clientUsername;
-
-  subscribeUsername((value) => {
-    clientUsername = value;
-  });
+  let listArticlesPageLimit = 10;
 
   $: currentPage = Number($page.url.searchParams.get("page") || 1);
 
@@ -38,10 +29,10 @@
         <div class="feed-toggle">
           <ul class="nav nav-pills outline-active">
             <li class="nav-item">
-              <a class="nav-link" href="">Your Feed</a>
+              <a class="nav-link" href="/">Your Feed</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link active" href="">Global Feed</a>
+              <a class="nav-link active" href="/">Global Feed</a>
             </li>
           </ul>
         </div>
@@ -77,14 +68,15 @@
             <p>Popular Tags</p>
 
             <div class="tag-list">
-              <a href="" class="tag-pill tag-default">programming</a>
-              <a href="" class="tag-pill tag-default">javascript</a>
-              <a href="" class="tag-pill tag-default">emberjs</a>
-              <a href="" class="tag-pill tag-default">angularjs</a>
-              <a href="" class="tag-pill tag-default">react</a>
-              <a href="" class="tag-pill tag-default">mean</a>
-              <a href="" class="tag-pill tag-default">node</a>
-              <a href="" class="tag-pill tag-default">rails</a>
+              <!-- TODO: Bring actual links to this-->
+              <a href="/" class="tag-pill tag-default">programming</a>
+              <a href="/" class="tag-pill tag-default">javascript</a>
+              <a href="/" class="tag-pill tag-default">emberjs</a>
+              <a href="/" class="tag-pill tag-default">angularjs</a>
+              <a href="/" class="tag-pill tag-default">react</a>
+              <a href="/" class="tag-pill tag-default">mean</a>
+              <a href="/" class="tag-pill tag-default">node</a>
+              <a href="/" class="tag-pill tag-default">rails</a>
             </div>
           </div>
         </div>
