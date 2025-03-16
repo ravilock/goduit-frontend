@@ -1,24 +1,24 @@
 <script>
-  import { fallbackUserImage } from "./constants";
+  import { fallbackUserImage } from "$lib/constants";
   import { subscribeUsername } from "$lib/auth";
-  import { page } from "$app/stores";
+  import { deleteComment } from "$lib/comment/comment";
+
+  /**
+   * @type {string}
+   */
+  export let articleSlug;
 
   /**
    * @type {string}
    */
   let clientUsername;
 
-  /**
-   * @type {() => Promise<void>}
-   */
-  export let deleteComment;
-
   subscribeUsername((value) => {
     clientUsername = value;
   });
 
   /**
-   * @type {{ author: { username: string; image: string; }; id: string; createdAt: string, updatedAt?: string, body: string }}
+   * @type {import("$lib/comment/comment").Comment}
    */
   export let comment;
   const createAt = new Date(Date.parse(comment.createdAt));
@@ -33,6 +33,7 @@
       <img
         src={comment.author.image || fallbackUserImage}
         class="comment-author-img"
+        alt="Comment Profile"
       />
     </a>
     &nbsp;
@@ -41,9 +42,12 @@
     </a>
     <span class="date-posted"><b>{createAt.toLocaleDateString()}</b></span>
     {#if comment.author.username === clientUsername}
-      <span class="mod-options" on:click|preventDefault={deleteComment}>
+      <button
+        class="mod-options"
+        on:click|preventDefault={() => deleteComment(articleSlug, comment.id)}
+      >
         <i class="ion-trash-a"></i>
-      </span>
+      </button>
     {/if}
   </div>
 </div>

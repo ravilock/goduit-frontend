@@ -3,18 +3,17 @@
     isAuthenticated,
     subscribeUsername,
     subscribeUserImage,
-    logOut,
   } from "$lib/auth";
   import { page } from "$app/stores";
   import { fallbackUserImage } from "$lib/constants";
-  import Comment from "$lib/comment.svelte";
-  import { error } from "@sveltejs/kit";
+  import Comment from "$lib/comment/comment.svelte";
   import { onMount } from "svelte";
+  import WriteCommentForm from "$lib/comment/writeCommentForm.svelte";
+  import { subscribeComments } from "$lib/comment/comment";
+  import MangeArticleSection from "$lib/article/mangeArticleSection.svelte";
 
   /** @type {import('./$types').PageData} */
   export let data;
-
-  const statusNotFound = 404;
 
   const slug = $page.params.slug;
 
@@ -44,7 +43,7 @@
   });
 
   /**
-   * @type {{ author: { username: string; image: string; following: boolean; }; favoritesCount: number; slug: string; title: string; description: string; body: string; tagList: string[]; createdAt: string, updatedAt?: string }}
+   * @type {import("$lib/article/article").Article}
    */
   let article = data.article;
 
@@ -58,64 +57,12 @@
   let updatedAt;
 
   /**
-   * @type {{ author: { username: string; image: string; }; id: string; createdAt: string, updatedAt?: string, body: string }[]}
+   * @type {import("$lib/comment/comment").Comment[]}
    */
-  let comments = data.comments || [];
-
-  /**
-   * @type string
-   */
-  let comment = "";
-
-  async function writeComment() {
-    if (!comment) return;
-    if (!isAuthenticated()) await logOut();
-    const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/article/${slug}/comments`,
-      {
-        credentials: "include",
-        method: "POST",
-        body: JSON.stringify({
-          comment: {
-            body: comment,
-          },
-        }),
-        headers: new Headers({
-          "Content-Type": "application/json",
-        }),
-      },
-    );
-    comment = "";
-    const data = await response.json();
-    console.log(data);
-    if (!response.ok) {
-      if (response.status === statusNotFound)
-        return error(statusNotFound, `Article ${slug} Not Found`);
-      // @ts-ignore
-      return error(response.status, data.message);
-    }
-    comments = [data.comment, ...comments];
-  }
-
-  /**
-   * @param {string} commentId
-   */
-  function createDeleteCommentHandler(commentId) {
-    return async function () {
-      if (!isAuthenticated()) await logOut();
-      await fetch(
-        `${import.meta.env.VITE_API_URL}/api/article/${slug}/comments/${commentId}`,
-        {
-          credentials: "include",
-          method: "DELETE",
-          headers: new Headers({
-            "Content-Type": "application/json",
-          }),
-        },
-      );
-      comments = comments.filter((comment) => comment.id !== commentId);
-    };
-  }
+  let comments = [];
+  subscribeComments((newComments) => {
+    comments = newComments || [];
+  });
 </script>
 
 <div class="article-page">
@@ -125,7 +72,10 @@
 
       <div class="article-meta">
         <a href={`/profile/${article.author.username}`}
-          ><img src={article.author.image || fallbackUserImage} /></a
+          ><img
+            src={article.author.image || fallbackUserImage}
+            alt="Author Profile"
+          /></a
         >
         <div class="info">
           <a href={`/profile/${article.author.username}`} class="author"
@@ -166,12 +116,7 @@
         <!--   <span class="counter">({article.favoritesCount})</span> -->
         <!-- </button> -->
         {#if article.author.username === clientUsername}
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-edit"></i> Edit Article
-          </button>
-          <button class="btn btn-sm btn-outline-danger">
-            <i class="ion-trash-a"></i> Delete Article
-          </button>
+          <MangeArticleSection {article} />
         {/if}
       </div>
     </div>
@@ -199,7 +144,10 @@
     <div class="article-actions">
       <div class="article-meta">
         <a href={`/profile/${article.author.username}`}
-          ><img src={article.author.image || fallbackUserImage} /></a
+          ><img
+            src={article.author.image || fallbackUserImage}
+            alt="Author Profile"
+          /></a
         >
         <div class="info">
           <a href={`/profile/${article.author.username}`} class="author"
@@ -240,51 +188,16 @@
         <!--   <span class="counter">({article.favoritesCount})</span> -->
         <!-- </button> -->
         {#if article.author.username === clientUsername}
-          <button class="btn btn-sm btn-outline-secondary">
-            <i class="ion-edit"></i> Edit Article
-          </button>
-          <button class="btn btn-sm btn-outline-danger">
-            <i class="ion-trash-a"></i> Delete Article
-          </button>
+          <MangeArticleSection {article} />
         {/if}
       </div>
     </div>
 
     <div class="row">
       <div class="col-xs-12 col-md-8 offset-md-2">
-        <form class="card comment-form">
-          <div class="card-block">
-            <textarea
-              bind:value={comment}
-              disabled={!isLoggedIn}
-              class="form-control"
-              placeholder="Write a comment..."
-              rows="3"
-            ></textarea>
-          </div>
-          <div class="card-footer">
-            <img
-              src={userImage || fallbackUserImage}
-              class="comment-author-img"
-            />
-            <!-- TODO: Add comment article -->
-            {#if isLoggedIn}
-              <button
-                class="btn btn-sm btn-primary"
-                on:click|preventDefault={writeComment}>Post Comment</button
-              >
-            {:else}
-              <button class="btn btn-sm btn-primary disabled" disabled
-                >Sign In To Comment</button
-              >
-            {/if}
-          </div>
-        </form>
+        <WriteCommentForm {isLoggedIn} articleSlug={slug} {userImage} />
         {#each comments as comment (comment)}
-          <Comment
-            {comment}
-            deleteComment={createDeleteCommentHandler(comment.id)}
-          />
+          <Comment {comment} articleSlug={slug} />
         {/each}
       </div>
     </div>

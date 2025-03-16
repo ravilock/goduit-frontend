@@ -1,23 +1,22 @@
 import { error } from "@sveltejs/kit";
+import type { PageLoadEvent } from "./$types";
+import type { Article } from "$lib/article/article";
+import { setComments, type Comment } from "$lib/comment/comment";
 
 const statusNotFound = 404;
 
 export const ssr = false
 
-/** @type {import('./$types').PageLoad} */
-export async function load({ params }) {
+export async function load({ params }: PageLoadEvent): Promise<{ article: Article }> {
   const slug = params.slug
   const [article, comments] = await Promise.all([loadArticle(slug), loadComments(slug)]);
+  setComments(comments);
   return {
     article,
-    comments,
   }
 }
 
-/**
- * @param {string} slug
- */
-async function loadArticle(slug) {
+async function loadArticle(slug: string): Promise<Article> {
   const headers = new Headers({
     "Content-Type": "application/json",
   });
@@ -40,10 +39,7 @@ async function loadArticle(slug) {
   return data.article
 }
 
-/**
- * @param {string} slug
- */
-async function loadComments(slug) {
+async function loadComments(slug: string): Promise<Comment[]> {
   const headers = new Headers({
     "Content-Type": "application/json",
   });

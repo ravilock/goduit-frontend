@@ -1,5 +1,5 @@
 <script>
-  import ArticlePreview from "$lib/articlePreview.svelte";
+  import ArticlePreview from "$lib/article/articlePreview.svelte";
   import { page } from "$app/stores";
 
   /** @type {import('./$types').PageData} */

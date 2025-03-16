@@ -1,5 +1,5 @@
 <script>
-  import { fallbackUserImage } from "./constants";
+  import { fallbackUserImage } from "$lib/constants";
 
   /**
    * @type {{ author: { username: string; image: string; }; favoritesCount: number; slug: string; title: string; description: string; tagList: string[]; createdAt: string, updatedAt?: string }}

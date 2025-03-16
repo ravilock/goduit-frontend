@@ -1,5 +1,5 @@
 <script>
-  import ArticlePreview from "$lib/articlePreview.svelte";
+  import ArticlePreview from "$lib/article/articlePreview.svelte";
   import { isAuthenticated, logOut, subscribeUsername } from "$lib/auth";
   import { fallbackUserImage, listArticlesPageLimit } from "$lib/constants";
   import { page } from "$app/stores";
