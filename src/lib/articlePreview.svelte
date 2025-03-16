@@ -16,14 +16,21 @@
 
 <div class="article-preview">
   <div class="article-meta">
-    <a href={`/profile/${article.author.username}`}>
+    <a
+      href={`/profile/${article.author.username}`}
+      data-sveltekit-preload-data="tap"
+    >
       <img
         src={article.author.image || fallbackUserImage}
         alt="author profile pic"
       />
     </a>
     <div class="info">
-      <a href={`/profile/${article.author.username}`} class="author">
+      <a
+        href={`/profile/${article.author.username}`}
+        class="author"
+        data-sveltekit-preload-data="tap"
+      >
         {article.author.username}
       </a>
       <span class="date"
@@ -40,7 +47,11 @@
       <i class="ion-heart"></i>&nbsp;{article.favoritesCount}
     </button>
   </div>
-  <a href={`/article/${article.slug}`} class="preview-link">
+  <a
+    href={`/article/${article.slug}`}
+    data-sveltekit-preload-data="tap"
+    class="preview-link"
+  >
     <h1>{article.title}</h1>
     <p><b>{article.description}</b></p>
     <span>Read more...</span>
