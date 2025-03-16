@@ -1,5 +1,4 @@
 import { writable, type Writable } from "svelte/store"
-import { identityCookieName } from "$lib/constants";
 import { goto } from "$app/navigation";
 
 const statusConflict = 409;
@@ -8,7 +7,6 @@ export type UserResponse = {
   user: {
     username: string;
     email: string;
-    token: string;
     bio?: string;
     image?: string;
   }
@@ -18,7 +16,7 @@ function isUserResponse(data: unknown): data is UserResponse {
   if (!data) return false
   if (!(data as UserResponse)?.user) return false
   const { user } = data as UserResponse;
-  return (user.username && user.email && user.token) !== ""
+  return (user.username && user.email) !== ""
 }
 
 export type LogInPayload = {
@@ -49,6 +47,7 @@ export async function logIn(logInPayload: LogInPayload) {
     `${import.meta.env.VITE_API_URL}/api/users/login`,
     {
       method: "POST",
+      credentials: 'include',
       body: JSON.stringify({
         user: logInPayload
       }),
@@ -69,6 +68,7 @@ export async function signIn(signInPayload: SignInPayload) {
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/api/users`,
     {
+      credentials: 'include',
       method: "POST",
       body: JSON.stringify({
         user: signInPayload
@@ -88,7 +88,7 @@ export async function signIn(signInPayload: SignInPayload) {
 }
 
 function setCredentials({ user }: UserResponse): void {
-  const { username, email, bio, image, token } = user
+  const { username, email, bio, image } = user
   sessionStorage.setItem("username", username);
   usernameStore.set(username);
   sessionStorage.setItem("userEmail", email);
@@ -101,15 +101,13 @@ function setCredentials({ user }: UserResponse): void {
     sessionStorage.setItem("userImage", image);
     userImageStore.set(image);
   }
-  sessionStorage.setItem("token", token);
 }
 
 export function isAuthenticated() {
-  const token = getCookie(identityCookieName) || sessionStorage.getItem("token");
-  const hasToken = token !== null && token.length > 0;
-  if (!hasToken) return false
   const username = sessionStorage.getItem("username")
+  if (!username) return false
   const userEmail = sessionStorage.getItem("userEmail")
+  if (!userEmail) return false
   const userBio = sessionStorage.getItem("userBio")
   const userImage = sessionStorage.getItem("userImage")
   if (username) usernameStore.set(username);
@@ -119,36 +117,20 @@ export function isAuthenticated() {
   return true
 }
 
-export function logOut() {
+export async function logOut() {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/users/logout`,
+    {
+      method: "POST",
+      credentials: 'include',
+    }
+  )
+  if (!response.ok) {
+    return ["Internal Error"];
+  }
   sessionStorage.removeItem("username");
   sessionStorage.removeItem("userEmail");
   sessionStorage.removeItem("userImage");
   sessionStorage.removeItem("userBio");
-  sessionStorage.removeItem("token")
-  deleteCookie(identityCookieName);
   goto("/")
-}
-
-export function getToken() {
-  return getCookie(identityCookieName) || sessionStorage.getItem("token")
-}
-
-function getCookie(cname: string): string | '' {
-  const name = cname + "=";
-  const decodedCookie = decodeURIComponent(document.cookie);
-  const ca = decodedCookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
-}
-
-function deleteCookie(cname: string) {
-  document.cookie = cname + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }

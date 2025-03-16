@@ -1,5 +1,5 @@
 import { goto } from "$app/navigation";
-import { getToken, logOut } from "./auth";
+import { isAuthenticated, logOut } from "./auth";
 import { isProfileResponse, type ProfileResponse } from "./profile";
 
 export type ArticleResponse = {
@@ -46,23 +46,23 @@ export type WriteArticlePayload = {
   body: string;
   tagList: string[];
 }
+
 export async function writeArticle(writeArticlePayload: WriteArticlePayload) {
-  const token = getToken();
-  if (!token) {
-    logOut();
+  if (!isAuthenticated()) {
+    await logOut();
     return [];
   }
 
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/api/articles`,
     {
+      credentials: 'include',
       method: "POST",
       body: JSON.stringify({
         article: writeArticlePayload,
       }),
       headers: new Headers({
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       }),
     }
   );

@@ -1,4 +1,3 @@
-import { getToken } from '$lib/auth';
 import { error } from "@sveltejs/kit";
 
 const statusNotFound = 404;
@@ -19,14 +18,13 @@ export async function load({ params }) {
  * @param {string} slug
  */
 async function loadArticle(slug) {
-  const token = getToken();
   const headers = new Headers({
     "Content-Type": "application/json",
   });
-  if (token) headers.set("Authorization", `Bearer ${token}`);
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/api/articles/${slug}`,
     {
+      credentials: 'include',
       headers,
     },
   );
@@ -46,14 +44,13 @@ async function loadArticle(slug) {
  * @param {string} slug
  */
 async function loadComments(slug) {
-  const token = getToken();
   const headers = new Headers({
     "Content-Type": "application/json",
   });
-  if (token) headers.set("Authorization", `Bearer ${token}`);
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/api/articles/${slug}/comments`,
     {
+      credentials: 'include',
       headers,
     },
   );

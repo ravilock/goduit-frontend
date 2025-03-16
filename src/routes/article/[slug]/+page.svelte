@@ -1,6 +1,5 @@
 <script>
   import {
-    getToken,
     isAuthenticated,
     subscribeUsername,
     subscribeUserImage,
@@ -70,11 +69,11 @@
 
   async function writeComment() {
     if (!comment) return;
-    const token = getToken();
-    if (!token) logOut();
+    if (!isAuthenticated()) await logOut();
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/article/${slug}/comments`,
       {
+        credentials: "include",
         method: "POST",
         body: JSON.stringify({
           comment: {
@@ -83,7 +82,6 @@
         }),
         headers: new Headers({
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         }),
       },
     );
@@ -104,15 +102,14 @@
    */
   function createDeleteCommentHandler(commentId) {
     return async function () {
-      const token = getToken();
-      if (!token) logOut();
+      if (!isAuthenticated()) await logOut();
       await fetch(
         `${import.meta.env.VITE_API_URL}/api/article/${slug}/comments/${commentId}`,
         {
+          credentials: "include",
           method: "DELETE",
           headers: new Headers({
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           }),
         },
       );

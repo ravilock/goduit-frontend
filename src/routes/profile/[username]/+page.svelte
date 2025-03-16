@@ -1,11 +1,6 @@
 <script>
   import ArticlePreview from "$lib/articlePreview.svelte";
-  import {
-    getToken,
-    isAuthenticated,
-    logOut,
-    subscribeUsername,
-  } from "$lib/auth";
+  import { isAuthenticated, logOut, subscribeUsername } from "$lib/auth";
   import { fallbackUserImage, listArticlesPageLimit } from "$lib/constants";
   import { page } from "$app/stores";
   import { afterNavigate } from "$app/navigation";
@@ -55,14 +50,13 @@
    * @param {string} username
    */
   async function loadProfileData(username) {
-    const token = getToken();
     const headers = new Headers({
       "Content-Type": "application/json",
     });
-    if (token) headers.set("Authorization", `Bearer ${token}`);
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/profiles/${username}`,
       {
+        credentials: "include",
         headers,
       },
     );
@@ -88,6 +82,9 @@
     });
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/articles?${query.toString()}`,
+      {
+        credentials: "include",
+      },
     );
     const data = await response.json();
     if (!response.ok) {
@@ -100,15 +97,14 @@
   }
 
   async function followUser() {
-    const token = getToken();
-    if (!token) return logOut();
+    if (!isAuthenticated()) return await logOut();
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/profiles/${username}/follow`,
       {
+        credentials: "include",
         method: "POST",
         headers: new Headers({
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         }),
       },
     );
@@ -117,15 +113,14 @@
   }
 
   async function unfollowUser() {
-    const token = getToken();
-    if (!token) return logOut();
+    if (!isAuthenticated()) return await logOut();
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/profiles/${username}/follow`,
       {
+        credentials: "include",
         method: "DELETE",
         headers: new Headers({
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         }),
       },
     );
@@ -222,7 +217,6 @@
             </li>
           {/if}
         </ul>
-
       </div>
     </div>
   </div>

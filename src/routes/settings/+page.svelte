@@ -12,7 +12,6 @@
     setUserImage,
     subscribeUserBio,
     setUserBio,
-    getToken,
     logOut,
   } from "$lib/auth";
   import ErrorMessages from "$lib/errorMessages.svelte";
@@ -110,16 +109,15 @@
    * @returns Promise<string[] | void>
    */
   async function updateProfile(updateProfilePayload) {
-    const token = getToken();
-    if (!token) return logOut();
+    if (!isAuthenticated()) return await logOut();
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/user`, {
+      credentials: "include",
       method: "PUT",
       body: JSON.stringify({
         user: updateProfilePayload,
       }),
       headers: new Headers({
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
       }),
     });
     const data = await response.json();

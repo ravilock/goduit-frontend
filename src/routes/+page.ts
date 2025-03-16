@@ -1,4 +1,3 @@
-import { getToken } from '$lib/auth';
 import { error, type LoadEvent } from "@sveltejs/kit";
 
 export const ssr = false
@@ -15,14 +14,15 @@ export async function load({ url }: LoadEvent) {
 }
 
 async function loadArticles(offset: number) {
-  const token = getToken();
   const headers = new Headers({
     "Content-Type": "application/json",
   });
-  if (token) headers.set("Authorization", `Bearer ${token}`);
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/api/articles?offset=${offset}`,
-    { headers },
+    {
+      headers,
+      credentials: 'include',
+    },
   );
   const data = await response.json();
   if (!response.ok) {
