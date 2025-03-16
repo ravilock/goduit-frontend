@@ -1,12 +1,11 @@
 import { getToken } from '$lib/auth';
-import { error } from "@sveltejs/kit";
+import { error, type LoadEvent } from "@sveltejs/kit";
 
 export const ssr = false
 
 const listArticlesPageLimit = 20;
 
-/** @type {import('./$types').PageLoad} */
-export async function load({ url }) {
+export async function load({ url }: LoadEvent) {
   const page = Number(url.searchParams.get("page") || 1) - 1;
   const offset = page * listArticlesPageLimit;
   const [articles] = await Promise.all([loadArticles(offset)]);
@@ -15,10 +14,7 @@ export async function load({ url }) {
   }
 }
 
-/**
- * @param {number} offset
- */
-async function loadArticles(offset) {
+async function loadArticles(offset: number) {
   const token = getToken();
   const headers = new Headers({
     "Content-Type": "application/json",

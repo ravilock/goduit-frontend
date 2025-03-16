@@ -61,7 +61,7 @@
     });
     if (token) headers.set("Authorization", `Bearer ${token}`);
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profile/${username}`,
+      `${import.meta.env.VITE_API_URL}/api/profiles/${username}`,
       {
         headers,
       },
@@ -103,7 +103,7 @@
     const token = getToken();
     if (!token) return logOut();
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profile/${username}/follow`,
+      `${import.meta.env.VITE_API_URL}/api/profiles/${username}/follow`,
       {
         method: "POST",
         headers: new Headers({
@@ -120,7 +120,7 @@
     const token = getToken();
     if (!token) return logOut();
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profile/${username}/follow`,
+      `${import.meta.env.VITE_API_URL}/api/profiles/${username}/follow`,
       {
         method: "DELETE",
         headers: new Headers({
