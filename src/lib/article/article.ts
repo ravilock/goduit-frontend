@@ -54,6 +54,24 @@ function isArticleResponse(data: unknown): data is ArticleResponse {
   );
 }
 
+export async function listArticles(offset: number) {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/articles?offset=${offset}`,
+    {
+      headers: new Headers({
+        "Content-Type": "application/json",
+      }),
+      credentials: 'include',
+    },
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    // @ts-expect-error Dont know the type yet
+    error(response.status, data.message);
+  }
+  return data.articles
+}
+
 export async function writeArticle(writeArticlePayload: WriteArticlePayload) {
   if (!isAuthenticated()) {
     await logOut();

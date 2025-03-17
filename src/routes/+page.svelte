@@ -1,6 +1,13 @@
 <script>
   import ArticlePreview from "$lib/article/articlePreview.svelte";
   import { page } from "$app/stores";
+  import FeedTogle from "$lib/article/feedTogle.svelte";
+
+  /** @type {import('$lib/article/feed').FeedOption} */
+  $: currentFeed =
+    $page.url.searchParams.get("currentFeed") == "personal"
+      ? "personal"
+      : "global";
 
   /** @type {import('./$types').PageData} */
   export let data;
@@ -26,16 +33,7 @@
   <div class="container page">
     <div class="row">
       <div class="col-md-9">
-        <div class="feed-toggle">
-          <ul class="nav nav-pills outline-active">
-            <li class="nav-item">
-              <a class="nav-link" href="/">Your Feed</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="/">Global Feed</a>
-            </li>
-          </ul>
-        </div>
+        <FeedTogle activeFeed={currentFeed} />
 
         {#each articles as article (article.slug)}
           <ArticlePreview {article} />
