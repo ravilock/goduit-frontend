@@ -103,7 +103,7 @@
   async function followUser() {
     if (!isAuthenticated()) return await logOut();
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profiles/${username}/follow`,
+      `${import.meta.env.VITE_API_URL}/api/profiles/${username}/followers`,
       {
         credentials: "include",
         method: "POST",
@@ -126,7 +126,7 @@
   async function unfollowUser() {
     if (!isAuthenticated()) return await logOut();
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/profiles/${username}/follow`,
+      `${import.meta.env.VITE_API_URL}/api/profiles/${username}/followers`,
       {
         credentials: "include",
         method: "DELETE",
