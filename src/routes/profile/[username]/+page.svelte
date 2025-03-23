@@ -1,13 +1,15 @@
 <script>
   import ArticlePreview from "$lib/article/articlePreview.svelte";
   import { isAuthenticated, logOut, subscribeUsername } from "$lib/auth";
-  import { fallbackUserImage, listArticlesPageLimit } from "$lib/constants";
+  import {
+    fallbackUserImage,
+    httpStatus,
+    listArticlesPageLimit,
+  } from "$lib/constants";
   import { page } from "$app/stores";
   import { afterNavigate } from "$app/navigation";
   import { onMount } from "svelte";
   import { error } from "@sveltejs/kit";
-
-  const statusNotFound = 404;
 
   const username = $page.params.username;
 
@@ -62,9 +64,10 @@
     );
     const data = await response.json();
     if (!response.ok) {
-      if (response.status === statusNotFound)
-        return error(statusNotFound, `Profile ${username} Not Found`);
-      // @ts-ignore
+      if (response.status === httpStatus.notFound)
+        return error(404, `Profile ${username} Not Found`);
+      if (response.status === httpStatus.unauthorized) await logOut();
+      // @ts-expect-error Dont know the type yet
       return error(response.status, data.message);
     }
     profile = data.profile;
@@ -88,9 +91,10 @@
     );
     const data = await response.json();
     if (!response.ok) {
-      if (response.status === statusNotFound)
-        return error(statusNotFound, `Profile ${author} Not Found`);
-      // @ts-ignore
+      if (response.status === httpStatus.notFound)
+        return error(404, `Profile ${username} Not Found`);
+      if (response.status === httpStatus.unauthorized) await logOut();
+      // @ts-expect-error Dont know the type yet
       return error(response.status, data.message);
     }
     articles = data.articles;
@@ -109,6 +113,13 @@
       },
     );
     const data = await response.json();
+    if (!response.ok) {
+      if (response.status === httpStatus.notFound)
+        return error(404, `Profile ${username} Not Found`);
+      if (response.status === httpStatus.unauthorized) await logOut();
+      // @ts-expect-error Dont know the type yet
+      return error(response.status, data.message);
+    }
     if (data.profile) profile = data.profile;
   }
 
@@ -125,6 +136,13 @@
       },
     );
     const data = await response.json();
+    if (!response.ok) {
+      if (response.status === httpStatus.notFound)
+        return error(404, `Profile ${username} Not Found`);
+      if (response.status === httpStatus.unauthorized) await logOut();
+      // @ts-expect-error Dont know the type yet
+      return error(response.status, data.message);
+    }
     if (data.profile) profile = data.profile;
   }
 </script>
@@ -182,7 +200,7 @@
         <div class="articles-toggle">
           <ul class="nav nav-pills outline-active">
             <li class="nav-item">
-              <a class="nav-link active" href="">My Articles</a>
+              <a class="nav-link active" href="/">My Articles</a>
             </li>
             <!-- TODO: Implement favorited articles before -->
             <!--   <li class="nav-item"> -->

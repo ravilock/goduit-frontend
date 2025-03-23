@@ -1,6 +1,6 @@
+import { logOut } from "$lib/auth";
+import { httpStatus } from "$lib/constants";
 import { error } from "@sveltejs/kit";
-
-const statusNotFound = 404;
 
 export type FeedOption = 'global' | 'personal';
 
@@ -16,9 +16,10 @@ export async function feedArticles(offset: number) {
   );
   const data = await response.json();
   if (!response.ok) {
-    if (response.status == statusNotFound) return [];
+    if (response.status == httpStatus.notFound) return [];
+    if (response.status === httpStatus.unauthorized) await logOut();
     // @ts-expect-error Dont know the type yet
-    error(response.status, data.message);
+    return error(response.status, data.message);
   }
   return data.articles
 }

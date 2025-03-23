@@ -15,6 +15,7 @@
     logOut,
   } from "$lib/auth";
   import ErrorMessages from "$lib/errorMessages.svelte";
+    import { httpStatus } from "$lib/constants";
 
   /**
    * @type {string[]}
@@ -122,6 +123,7 @@
     });
     const data = await response.json();
     if (!response.ok) {
+      if (response.status === httpStatus.unauthorized) await logOut();
       if (data.message) return [data.message];
       else return ["Internal Error"];
     }

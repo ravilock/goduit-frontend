@@ -2,4 +2,4 @@
   import Editor from "$lib/article/editor.svelte";
 </script>
 
-<Editor />
+<Editor article={undefined} />

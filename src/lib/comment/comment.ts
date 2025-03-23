@@ -1,8 +1,7 @@
 import { get, writable, type Writable } from "svelte/store";
 import { isAuthenticated, logOut } from "$lib/auth";
 import { error } from "@sveltejs/kit";
-
-const statusNotFound = 404;
+import { httpStatus } from "$lib/constants";
 
 export type Comment = {
   author: {
@@ -18,6 +17,28 @@ export type Comment = {
 export const commentsStore: Writable<Comment[]> = writable();
 export const subscribeComments = commentsStore.subscribe;
 export const setComments = commentsStore.set;
+
+export async function loadComments(slug: string): Promise<Comment[]> {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/articles/${slug}/comments`,
+    {
+      credentials: 'include',
+      headers,
+    },
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    if (response.status === httpStatus.notFound)
+      error(404, `Article ${slug} Not Found`);
+    if (response.status === httpStatus.unauthorized) await logOut();
+    // @ts-expect-error Dont know the type yet
+    error(response.status, data.message);
+  }
+  return data.comments;
+}
 
 export async function deleteComment(articleSlug: string, commentId: string): Promise<void> {
   if (!isAuthenticated()) {
@@ -35,9 +56,10 @@ export async function deleteComment(articleSlug: string, commentId: string): Pro
     },
   );
   if (!response.ok) {
-    if (response.status === statusNotFound)
-      return error(statusNotFound, `Article ${articleSlug} Not Found`);
-    // @ts-ignore
+    if (response.status === httpStatus.notFound)
+      return error(404, `Article ${articleSlug} Not Found`);
+    if (response.status === httpStatus.unauthorized) await logOut();
+    // @ts-expect-error Dont know the type yet
     return error(response.status, data.message);
   }
   const comments = get(commentsStore);
@@ -67,9 +89,10 @@ export async function writeComment(articleSlug: string, commentBody: string): Pr
   );
   const data = await response.json();
   if (!response.ok) {
-    if (response.status === statusNotFound)
-      return error(statusNotFound, `Article ${articleSlug} Not Found`);
-    // @ts-ignore
+    if (response.status === httpStatus.notFound)
+      return error(404, `Article ${articleSlug} Not Found`);
+    if (response.status === httpStatus.unauthorized) await logOut();
+    // @ts-expect-error Dont know the type yet
     return error(response.status, data.message);
   }
   const comments = get(commentsStore) || [];

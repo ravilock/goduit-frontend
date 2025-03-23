@@ -1,6 +1,8 @@
 import { goto } from "$app/navigation";
 import { isAuthenticated, logOut } from "$lib/auth";
+import { httpStatus } from "$lib/constants";
 import { isProfileResponse, type ProfileResponse } from "$lib/profile";
+import { error } from "@sveltejs/kit";
 import { type Writable, writable } from "svelte/store";
 
 export type ArticleResponse = {
@@ -54,6 +56,28 @@ function isArticleResponse(data: unknown): data is ArticleResponse {
   );
 }
 
+export async function loadArticle(slug: string): Promise<Article> {
+  const headers = new Headers({
+    "Content-Type": "application/json",
+  });
+  const response = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/articles/${slug}`,
+    {
+      credentials: 'include',
+      headers,
+    },
+  );
+  const data = await response.json();
+  if (!response.ok) {
+    if (response.status === httpStatus.notFound)
+      error(404, `Article ${slug} Not Found`);
+    if (response.status === httpStatus.unauthorized) await logOut();
+    // @ts-expect-error Dont know the type yet
+    error(response.status, data.message);
+  }
+  return data.article
+}
+
 export async function listArticles(offset: number) {
   const response = await fetch(
     `${import.meta.env.VITE_API_URL}/api/articles?offset=${offset}`,
@@ -66,6 +90,8 @@ export async function listArticles(offset: number) {
   );
   const data = await response.json();
   if (!response.ok) {
+    console.log(response.status)
+    if (response.status === httpStatus.unauthorized) await logOut();
     // @ts-expect-error Dont know the type yet
     error(response.status, data.message);
   }
@@ -93,6 +119,7 @@ export async function writeArticle(writeArticlePayload: WriteArticlePayload) {
   );
   const data = await response.json();
   if (!response.ok) {
+    if (response.status === httpStatus.unauthorized) await logOut();
     if (data.message) return [data.message];
     else return ["Internal Error"];
   }
@@ -120,6 +147,7 @@ export async function updateArticle(writeArticlePayload: WriteArticlePayload, sl
   );
   const data = await response.json();
   if (!response.ok) {
+    if (response.status === httpStatus.unauthorized) await logOut();
     if (data.message) return [data.message];
     else return ["Internal Error"];
   }
@@ -143,6 +171,7 @@ export async function deleteArticle(slug: string) {
     }
   );
   if (!response.ok) {
+    if (response.status === httpStatus.unauthorized) await logOut();
     return ["Internal Error"];
   }
   return [];
